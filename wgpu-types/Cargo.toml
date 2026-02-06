@@ -59,8 +59,6 @@ serde = { workspace = true, default-features = false, features = [
     "alloc",
     "derive",
 ], optional = true }
-
-[target.'cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))'.dependencies]
 js-sys = { workspace = true, optional = true, default-features = false }
 web-sys = { workspace = true, optional = true, default-features = false, features = [
     "ImageBitmap",
