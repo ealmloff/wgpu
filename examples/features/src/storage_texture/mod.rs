@@ -14,9 +14,9 @@
 //! A lot of things aren't explained here via comments. See hello-compute and
 //! repeated-compute for code that is more thoroughly commented.
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 use crate::utils::output_image_native;
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 use crate::utils::output_image_wasm;
 
 const TEXTURE_DIMS: (usize, usize) = (512, 512);
@@ -152,15 +152,15 @@ async fn run(_path: Option<String>) {
     log::info!("GPU data copied to local.");
     output_staging_buffer.unmap();
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     output_image_native(texture_data.to_vec(), TEXTURE_DIMS, _path.unwrap());
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     output_image_wasm(texture_data.to_vec(), TEXTURE_DIMS);
     log::info!("Done.")
 }
 
 pub fn main() {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     {
         env_logger::builder()
             .filter_level(log::LevelFilter::Info)
@@ -172,7 +172,7 @@ pub fn main() {
             .unwrap_or_else(|| "please_don't_git_push_me.png".to_string());
         pollster::block_on(run(Some(path)));
     }
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
         console_log::init_with_level(log::Level::Info).expect("could not initialize logger");

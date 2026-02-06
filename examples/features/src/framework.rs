@@ -54,7 +54,7 @@ pub trait Example: 'static + Sized {
 // Initialize logging in platform dependant ways.
 fn init_logger() {
     cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
+        if #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))] {
             // As we don't have an environment to pull logging level from, we use the query string.
             let query_string = web_sys::window().unwrap().location().search().unwrap();
             let query_level: Option<log::LevelFilter> = parse_url_query_string(&query_string, "RUST_LOG")
@@ -89,7 +89,7 @@ impl EventLoopWrapper {
     pub fn new(title: &str) -> Self {
         let event_loop = EventLoop::new().unwrap();
         let mut builder = winit::window::WindowBuilder::new();
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
         {
             use wasm_bindgen::JsCast;
             use winit::platform::web::WindowBuilderExtWebSys;
@@ -135,7 +135,7 @@ impl SurfaceWrapper {
     /// We cannot unconditionally create a surface here, as Android requires
     /// us to wait until we receive the `Resumed` event to do so.
     fn pre_adapter(&mut self, instance: &Instance, window: Arc<Window>) {
-        if cfg!(target_arch = "wasm32") {
+        if cfg!(any(target_arch = "wasm32", feature = "wasm-bindgen")) {
             self.surface = Some(instance.create_surface(window).unwrap());
         }
     }
@@ -165,7 +165,7 @@ impl SurfaceWrapper {
         log::info!("Surface resume {window_size:?}");
 
         // We didn't create the surface in pre_adapter, so we need to do so now.
-        if !cfg!(target_arch = "wasm32") {
+        if !cfg!(any(target_arch = "wasm32", feature = "wasm-bindgen")) {
             self.surface = Some(context.instance.create_surface(window).unwrap());
         }
 
@@ -353,7 +353,7 @@ async fn start<E: Example>(title: &str) {
     let mut example = None;
 
     cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
+        if #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))] {
             use winit::platform::web::EventLoopExtWebSys;
             let event_loop_function = EventLoop::spawn;
         } else {
@@ -362,7 +362,7 @@ async fn start<E: Example>(title: &str) {
     }
 
     log::info!("Entering event loop...");
-    #[cfg_attr(target_arch = "wasm32", expect(clippy::let_unit_value))]
+    #[cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), expect(clippy::let_unit_value))]
     let _ = (event_loop_function)(
         window_loop.event_loop,
         move |event: Event<()>, target: &EventLoopWindowTarget<()>| {
@@ -405,7 +405,7 @@ async fn start<E: Example>(title: &str) {
                     | WindowEvent::CloseRequested => {
                         target.exit();
                     }
-                    #[cfg(not(target_arch = "wasm32"))]
+                    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
                     WindowEvent::KeyboardInput {
                         event:
                             KeyEvent {
@@ -453,7 +453,7 @@ async fn start<E: Example>(title: &str) {
 
 pub fn run<E: Example>(title: &'static str) {
     cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
+        if #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))] {
             wasm_bindgen_futures::spawn_local(async move { start::<E>(title).await })
         } else {
             pollster::block_on(start::<E>(title));
@@ -461,7 +461,7 @@ pub fn run<E: Example>(title: &'static str) {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 /// Parse the query string as returned by `web_sys::window()?.location().search()?` and get a
 /// specific key out of it.
 pub fn parse_url_query_string<'a>(query: &'a str, search_key: &str) -> Option<&'a str> {

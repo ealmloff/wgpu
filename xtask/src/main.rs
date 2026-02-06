@@ -1,5 +1,5 @@
-#![cfg_attr(target_arch = "wasm32", no_main)]
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), no_main)]
+#![cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 
 use std::process::ExitCode;
 

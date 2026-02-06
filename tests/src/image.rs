@@ -7,7 +7,7 @@ use wgpu::*;
 
 use crate::TestingContext;
 
-#[cfg(not(any(target_arch = "wasm32", miri)))]
+#[cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
 async fn read_png(path: impl AsRef<Path>, width: u32, height: u32) -> Option<Vec<u8>> {
     let data = match std::fs::read(&path) {
         Ok(f) => f,
@@ -48,7 +48,7 @@ async fn read_png(path: impl AsRef<Path>, width: u32, height: u32) -> Option<Vec
     Some(buffer)
 }
 
-#[cfg(not(any(target_arch = "wasm32", miri)))]
+#[cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
 async fn write_png(
     path: impl AsRef<Path>,
     width: u32,
@@ -67,7 +67,7 @@ async fn write_png(
     writer.write_image_data(data).unwrap();
 }
 
-#[cfg_attr(any(target_arch = "wasm32", miri), allow(unused))]
+#[cfg_attr(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri), allow(unused))]
 fn add_alpha(input: &[u8]) -> Vec<u8> {
     input
         .chunks_exact(3)
@@ -75,7 +75,7 @@ fn add_alpha(input: &[u8]) -> Vec<u8> {
         .collect()
 }
 
-#[cfg_attr(any(target_arch = "wasm32", miri), allow(unused))]
+#[cfg_attr(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri), allow(unused))]
 fn remove_alpha(input: &[u8]) -> Vec<u8> {
     input
         .chunks_exact(4)
@@ -84,7 +84,7 @@ fn remove_alpha(input: &[u8]) -> Vec<u8> {
         .collect()
 }
 
-#[cfg(not(any(target_arch = "wasm32", miri)))]
+#[cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
 fn print_flip(pool: &mut nv_flip::FlipPool) {
     println!("\tMean: {:.6}", pool.mean());
     println!("\tMin Value: {:.6}", pool.min_value());
@@ -118,7 +118,7 @@ pub enum ComparisonType {
 }
 
 impl ComparisonType {
-    #[cfg(not(any(target_arch = "wasm32", miri)))]
+    #[cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
     fn check(&self, pool: &mut nv_flip::FlipPool) -> bool {
         match *self {
             ComparisonType::Mean(v) => {
@@ -151,7 +151,7 @@ impl ComparisonType {
     }
 }
 
-#[cfg(not(any(target_arch = "wasm32", miri)))]
+#[cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
 pub async fn compare_image_output(
     path: impl AsRef<Path> + AsRef<OsStr>,
     adapter_info: &wgpu::AdapterInfo,
@@ -253,7 +253,7 @@ pub async fn compare_image_output(
     }
 }
 
-#[cfg(any(target_arch = "wasm32", miri))]
+#[cfg(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri))]
 pub async fn compare_image_output(
     path: impl AsRef<Path> + AsRef<OsStr>,
     adapter_info: &wgpu::AdapterInfo,
@@ -262,13 +262,13 @@ pub async fn compare_image_output(
     test_with_alpha: &[u8],
     checks: &[ComparisonType],
 ) {
-    #[cfg(any(target_arch = "wasm32", miri))]
+    #[cfg(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri))]
     {
         let _ = (path, adapter_info, width, height, test_with_alpha, checks);
     }
 }
 
-#[cfg_attr(any(target_arch = "wasm32", miri), allow(unused))]
+#[cfg_attr(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri), allow(unused))]
 fn sanitize_for_path(s: &str) -> String {
     s.chars()
         .map(|ch| if ch.is_ascii_alphanumeric() { ch } else { '_' })

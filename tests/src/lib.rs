@@ -13,7 +13,7 @@ mod poll;
 mod report;
 mod run;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 pub use init::initialize_html_canvas;
 
 pub use self::image::ComparisonType;
@@ -119,15 +119,15 @@ pub fn did_oom<T>(device: &wgpu::Device, callback: impl FnOnce() -> T) -> (bool,
 #[macro_export]
 macro_rules! gpu_test_main {
     ($tests: expr) => {
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
         wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
         fn main() {
             // Ensure that value is used so that warnings don't happen.
             let _ = $tests;
         }
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
         fn main() -> $crate::native::MainResult {
             $crate::native::main($tests)
         }

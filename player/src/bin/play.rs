@@ -1,6 +1,6 @@
 //! This is a player for WebGPU traces.
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 fn main() {
     extern crate wgpu_core as wgc;
     extern crate wgpu_types as wgt;
@@ -241,5 +241,5 @@ fn main() {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 fn main() {}

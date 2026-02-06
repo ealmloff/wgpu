@@ -17,13 +17,15 @@ harness = false
 
 [features]
 tracy = ["dep:tracy-client"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = []
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(feature, values("tracy"))',
 ] }
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 anyhow.workspace = true
 bincode = { workspace = true, features = ["serde"] }
 bytemuck.workspace = true

@@ -1,5 +1,5 @@
 // Copyright 2018-2025 the Deno authors. MIT license.
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 #![warn(unsafe_op_in_unsafe_fn)]
 
 use std::cell::RefCell;

@@ -18,7 +18,9 @@ rust-version = "1.76"
 
 [features]
 webgl = ["wgpu-hal/gles"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu-hal/wasm-bindgen"]
 
 # Depend on wgpu-hal conditionally, so that the above features only apply to wgpu-hal on this set of platforms.
-[target.'cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))'.dependencies]
+[target.'cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")))'.dependencies]
 wgpu-hal.workspace = true

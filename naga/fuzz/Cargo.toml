@@ -7,14 +7,18 @@ edition.workspace = true
 license.workspace = true
 build = "build.rs"
 
+[features]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = []
+
 [package.metadata]
 cargo-fuzz = true
 
-[target.'cfg(not(any(target_arch = "wasm32", target_os = "ios")))'.dependencies]
+[target.'cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), target_os = "ios")))'.dependencies]
 arbitrary = { workspace = true, features = ["derive"] }
 libfuzzer-sys.workspace = true
 
-[target.'cfg(not(any(target_arch = "wasm32", target_os = "ios", target_os = "visionos")))'.dependencies.naga]
+[target.'cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), target_os = "ios", target_os = "visionos")))'.dependencies.naga]
 workspace = true
 features = ["arbitrary", "spv-in", "wgsl-in", "glsl-in"]
 

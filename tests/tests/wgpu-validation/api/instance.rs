@@ -1,5 +1,5 @@
 mod multi_instance {
-    #![cfg(not(any(target_arch = "wasm32", miri)))]
+    #![cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
 
     async fn get() -> wgpu::Adapter {
         let adapter = {

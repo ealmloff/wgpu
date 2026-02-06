@@ -814,7 +814,7 @@ cfg_if::cfg_if! {
         type Api = hal::api::Metal;
     }
     // Wasm + Vulkan
-    else if #[cfg(all(not(target_arch = "wasm32"), feature = "vulkan"))] {
+    else if #[cfg(all(not(any(target_arch = "wasm32", feature = "wasm-bindgen")), feature = "vulkan"))] {
         type Api = hal::api::Vulkan;
     }
     // Windows + DX12

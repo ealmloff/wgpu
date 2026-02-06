@@ -47,6 +47,8 @@ counters = []
 trace = ["std"]
 # Enable web-specific dependencies for wasm.
 web = ["dep:js-sys", "dep:web-sys"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = []
 
 [dependencies]
 bitflags.workspace = true
@@ -58,7 +60,7 @@ serde = { workspace = true, default-features = false, features = [
     "derive",
 ], optional = true }
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
+[target.'cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))'.dependencies]
 js-sys = { workspace = true, optional = true, default-features = false }
 web-sys = { workspace = true, optional = true, default-features = false, features = [
     "ImageBitmap",

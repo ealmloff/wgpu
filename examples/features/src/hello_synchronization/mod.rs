@@ -189,7 +189,7 @@ async fn get_data<T: bytemuck::Pod>(
 }
 
 pub fn main() {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     {
         env_logger::builder()
             .filter_level(log::LevelFilter::Info)
@@ -197,7 +197,7 @@ pub fn main() {
             .init();
         pollster::block_on(run());
     }
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
         console_log::init_with_level(log::Level::Info).expect("could not initialize logger");

@@ -5,7 +5,7 @@
 #[allow(clippy::ptr_arg)]
 pub fn all_tests(_vec: &mut Vec<wgpu_test::GpuTestInitializer>) {
     #[cfg(any(
-        not(target_arch = "wasm32"),
+        not(any(target_arch = "wasm32", feature = "wasm-bindgen")),
         target_os = "emscripten",
         feature = "webgl"
     ))]
@@ -13,7 +13,7 @@ pub fn all_tests(_vec: &mut Vec<wgpu_test::GpuTestInitializer>) {
 }
 
 #[cfg(any(
-    not(target_arch = "wasm32"),
+    not(any(target_arch = "wasm32", feature = "wasm-bindgen")),
     target_os = "emscripten",
     feature = "webgl"
 ))]
@@ -304,7 +304,7 @@ async fn draw_test_with_reports(
 }
 
 #[cfg(any(
-    not(target_arch = "wasm32"),
+    not(any(target_arch = "wasm32", feature = "wasm-bindgen")),
     target_os = "emscripten",
     feature = "webgl"
 ))]

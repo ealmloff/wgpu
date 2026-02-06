@@ -27,7 +27,7 @@ pub fn gpu_test(_attr: TokenStream, item: TokenStream) -> TokenStream {
             ::wgpu_test::GpuTestConfiguration::from(#expr).name_from_init_function_typename::<S>(#ident_lower)
         }
 
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
         #[wasm_bindgen_test::wasm_bindgen_test]
         #vis async fn #test_name_webgl() {
             struct S;

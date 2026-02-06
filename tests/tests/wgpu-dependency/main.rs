@@ -1,6 +1,6 @@
 // Cargo-metadata doesn't compile on wasm due to old cargo-util-schemas dependency.
 // Since this test isn't dependent on the current architecture, we can just skip it on wasm without any issues.
-#![cfg(not(any(target_arch = "wasm32", miri)))]
+#![cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))]
 
 use std::process::Command;
 

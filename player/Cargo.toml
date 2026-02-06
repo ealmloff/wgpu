@@ -18,6 +18,10 @@ test = false
 name = "play"
 test = false
 
+[features]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu-types/wasm-bindgen"]
+
 [dependencies]
 wgpu-types = { workspace = true, features = ["serde", "std"] }
 
@@ -32,7 +36,7 @@ bytemuck.workspace = true
 # Non-Webassembly
 #
 # We are a non-wasm only crate, and this allows us to compile.
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies.wgpu-core]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies.wgpu-core]
 workspace = true
 features = [
     "replay",

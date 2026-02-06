@@ -219,7 +219,7 @@ fn create_staging_buffers(device: &wgpu::Device, numbers: &[f32]) -> Vec<wgpu::B
         .collect()
 }
 
-#[cfg_attr(target_arch = "wasm32", allow(clippy::allow_attributes, dead_code))]
+#[cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), allow(clippy::allow_attributes, dead_code))]
 async fn run() {
     let numbers = {
         const BYTES_PER_GB: usize = 1024 * 1024 * 1024;
@@ -238,7 +238,7 @@ async fn run() {
 }
 
 pub fn main() {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     {
         env_logger::init();
         pollster::block_on(run());
@@ -246,5 +246,5 @@ pub fn main() {
 }
 
 #[cfg(test)]
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 pub mod tests;

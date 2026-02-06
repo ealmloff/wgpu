@@ -141,9 +141,9 @@ impl FailureCase {
 
     /// Tests running under WebGL.
     pub fn webgl2() -> Self {
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
         let case = FailureCase::backend(wgpu::Backends::GL);
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
         let case = FailureCase::never();
         case
     }

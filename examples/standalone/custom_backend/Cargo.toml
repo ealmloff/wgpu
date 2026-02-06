@@ -7,6 +7,8 @@ publish = false
 [features]
 default = ["web"]
 web = ["wgpu/web"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu/wasm-bindgen"]
 
 [dependencies]
 wgpu = { version = "28.0.0", features = [

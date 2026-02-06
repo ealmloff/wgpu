@@ -5,9 +5,9 @@ use crate::{report::AdapterReport, TestParameters};
 /// Initialize the logger for the test runner.
 pub fn init_logger() {
     // We don't actually care if it fails
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     let _ = env_logger::try_init();
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     let _ = console_log::init_with_level(log::Level::Info);
 }
 
@@ -73,7 +73,7 @@ pub fn initialize_instance(backends: wgpu::Backends, params: &TestParameters) ->
             // However, we use wasm_bindgen_test to run tests on wasm, and wgpu
             // will chose the noop on wasm32 for some reason.
             noop: wgpu::NoopBackendOptions {
-                enable: !cfg!(target_arch = "wasm32"),
+                enable: !cfg!(any(target_arch = "wasm32", feature = "wasm-bindgen")),
             },
         },
         display: None,
@@ -97,7 +97,7 @@ pub async fn initialize_adapter(
     #[allow(unused_assignments)]
     // Create a canvas if we need a WebGL2RenderingContext to have a working device.
     #[cfg(not(all(
-        target_arch = "wasm32",
+        any(target_arch = "wasm32", feature = "wasm-bindgen"),
         any(target_os = "emscripten", feature = "webgl")
     )))]
     {
@@ -105,7 +105,7 @@ pub async fn initialize_adapter(
         surface_guard = None;
     }
     #[cfg(all(
-        target_arch = "wasm32",
+        any(target_arch = "wasm32", feature = "wasm-bindgen"),
         any(target_os = "emscripten", feature = "webgl")
     ))]
     {
@@ -122,7 +122,7 @@ pub async fn initialize_adapter(
     }
 
     cfg_if::cfg_if! {
-        if #[cfg(not(target_arch = "wasm32"))] {
+        if #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))] {
             let adapter_iter = instance.enumerate_adapters(backends).await;
             let adapter = adapter_iter.into_iter()
                 // If we have a report, we only want to match the adapter with the same info.
@@ -177,7 +177,7 @@ pub async fn initialize_device(
 }
 
 /// Create a canvas for testing.
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 pub fn initialize_html_canvas() -> web_sys::HtmlCanvasElement {
     use wasm_bindgen::JsCast;
 
@@ -191,14 +191,14 @@ pub fn initialize_html_canvas() -> web_sys::HtmlCanvasElement {
 }
 
 pub struct SurfaceGuard {
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     #[allow(unused)]
     canvas: web_sys::HtmlCanvasElement,
 }
 
 impl SurfaceGuard {
     #[cfg(all(
-        target_arch = "wasm32",
+        any(target_arch = "wasm32", feature = "wasm-bindgen"),
         any(target_os = "emscripten", feature = "webgl")
     ))]
     pub(crate) fn check_for_unreported_errors(&self) -> bool {

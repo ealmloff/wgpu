@@ -428,12 +428,12 @@ fn render_pass(
 }
 
 pub fn main() {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     {
         env_logger::init();
         pollster::block_on(run());
     }
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
         console_log::init().expect("could not initialize logger");

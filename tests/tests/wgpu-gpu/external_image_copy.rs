@@ -1,4 +1,4 @@
-#![cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))]
+#![cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")))]
 
 use wasm_bindgen::JsCast;
 use wgpu::ExternalImageSource;

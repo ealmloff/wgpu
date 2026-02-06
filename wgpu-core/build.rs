@@ -4,12 +4,12 @@ fn main() {
         send_sync: { all(
             feature = "std",
             any(
-                not(target_arch = "wasm32"),
+                not(any(target_arch = "wasm32", feature = "wasm-bindgen")),
                 all(feature = "fragile-send-sync-non-atomic-wasm", not(target_feature = "atomics"))
             )
         ) },
         dx12: { all(target_os = "windows", feature = "dx12") },
-        webgl: { all(target_arch = "wasm32", not(target_os = "emscripten"), feature = "webgl") },
+        webgl: { all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten"), feature = "webgl") },
         gles: { any(
             all(windows_linux_android, feature = "gles"), // Regular GLES
             all(webgl), // WebGL

@@ -1,6 +1,6 @@
 //! This is a player library for WebGPU traces.
 
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 #![warn(clippy::allow_attributes, unsafe_op_in_unsafe_fn)]
 
 extern crate wgpu_core as wgc;

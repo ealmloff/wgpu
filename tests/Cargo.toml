@@ -33,6 +33,14 @@ harness = true
 
 [features]
 webgl = ["wgpu/webgl"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = [
+    "wgpu/wasm-bindgen",
+    "wgpu-core/wasm-bindgen",
+    "wgpu-hal/wasm-bindgen",
+    "wgpu-types/wasm-bindgen",
+    "wgpu-macros/wasm-bindgen",
+]
 # This feature is not actually used by this package, but it being present somewhere in the workspace
 # allows us to force the build to have profiling code enabled so we can test that configuration.
 test-build-with-profiling = ["profiling/type-check"]
@@ -75,23 +83,23 @@ strum = { workspace = true, features = ["derive"] }
 trybuild.workspace = true
 
 # Non-Webassembly
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 # Cargo-metadata doesn't compile on wasm due to old cargo-util-schemas dependency.
 cargo_metadata.workspace = true
 env_logger.workspace = true
 parking_lot = { workspace = true, features = ["deadlock_detection"] }
 
-[target.'cfg(not(any(target_arch = "wasm32", miri)))'.dependencies]
+[target.'cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), miri)))'.dependencies]
 nv-flip.workspace = true
 
 # Webassembly
-[target.'cfg(target_arch = "wasm32")'.dependencies]
+[target.'cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))'.dependencies]
 console_log.workspace = true
 wasm-bindgen.workspace = true
 web-sys = { workspace = true }
 
 # Webassembly Dev Dependencies
-[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+[target.'cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))'.dev-dependencies]
 image.workspace = true
 js-sys.workspace = true
 wasm-bindgen-futures.workspace = true

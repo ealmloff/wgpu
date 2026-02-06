@@ -5027,7 +5027,7 @@ impl Device {
                     Ok(wgt::PollStatus::Poll) => {
                         unreachable!("Cannot get a Poll result from a Wait action.")
                     }
-                    Err(WaitIdleError::Timeout) if cfg!(target_arch = "wasm32") => {
+                    Err(WaitIdleError::Timeout) if cfg!(any(target_arch = "wasm32", feature = "wasm-bindgen")) => {
                         // On wasm, you cannot actually successfully wait for the surface.
                         // However WebGL does not actually require you do this, so ignoring
                         // the failure is totally fine. See https://github.com/gfx-rs/wgpu/issues/7363

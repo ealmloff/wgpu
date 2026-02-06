@@ -123,6 +123,13 @@ static-dxc = ["wgpu-hal/static-dxc"]
 ## Enable portable atomics on platforms that do not support 64bit atomics.
 portable-atomic = ["dep:portable-atomic", "wgpu-hal/portable-atomic"]
 
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = [
+    "wgpu-hal/wasm-bindgen",
+    "wgpu-types/wasm-bindgen",
+    "wgpu-core-deps-wasm?/wasm-bindgen",
+]
+
 #! ### Target Conditional Features
 # --------------------------------------------------------------------
 # Look to wgpu-hal's Cargo.toml for explaination how these features and the wgpu-core
@@ -160,7 +167,7 @@ noop = []
 wgpu-core-deps-apple = { workspace = true, optional = true }
 [target.'cfg(target_os = "emscripten")'.dependencies]
 wgpu-core-deps-emscripten = { workspace = true, optional = true }
-[target.'cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))'.dependencies]
+[target.'cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")))'.dependencies]
 wgpu-core-deps-wasm = { workspace = true, optional = true }
 [target.'cfg(any(windows, target_os = "linux", target_os = "android", target_os = "freebsd"))'.dependencies]
 wgpu-core-deps-windows-linux-android = { workspace = true, optional = true }

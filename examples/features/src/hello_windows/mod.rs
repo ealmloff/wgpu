@@ -1,4 +1,4 @@
-#![cfg_attr(target_arch = "wasm32", allow(dead_code))]
+#![cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), allow(dead_code))]
 
 use std::{collections::HashMap, sync::Arc};
 use winit::{
@@ -156,7 +156,7 @@ async fn run(event_loop: EventLoop<()>, viewports: Vec<(Arc<Window>, wgpu::Color
 }
 
 pub fn main() {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     {
         const WINDOW_SIZE: u32 = 128;
         const WINDOW_PADDING: u32 = 16;
@@ -197,7 +197,7 @@ pub fn main() {
         env_logger::init();
         pollster::block_on(run(event_loop, viewports));
     }
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
         panic!("wasm32 is not supported")

@@ -177,7 +177,7 @@ impl TestInfo {
             skip = true;
             format!("Unsupported: {}", unsupported_reasons.join(" | "))
         } else if !failure_application_reasons.is_empty() {
-            if cfg!(target_arch = "wasm32") {
+            if cfg!(any(target_arch = "wasm32", feature = "wasm-bindgen")) {
                 skip = true;
             }
 

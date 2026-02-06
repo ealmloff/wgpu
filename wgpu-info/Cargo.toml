@@ -10,6 +10,10 @@ keywords.workspace = true
 license.workspace = true
 rust-version.workspace = true
 
+[features]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu/wasm-bindgen"]
+
 [dependencies]
 anyhow.workspace = true
 bitflags.workspace = true

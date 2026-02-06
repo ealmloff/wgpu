@@ -1,9 +1,9 @@
 struct ExampleDesc {
     name: &'static str,
     function: fn(),
-    #[cfg_attr(not(target_arch = "wasm32"), expect(dead_code))]
+    #[cfg_attr(not(any(target_arch = "wasm32", feature = "wasm-bindgen")), expect(dead_code))]
     webgl: bool,
-    #[cfg_attr(not(target_arch = "wasm32"), expect(dead_code))]
+    #[cfg_attr(not(any(target_arch = "wasm32", feature = "wasm-bindgen")), expect(dead_code))]
     webgpu: bool,
 }
 
@@ -204,7 +204,7 @@ const EXAMPLES: &[ExampleDesc] = &[
 
 fn get_example_name() -> Option<String> {
     cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
+        if #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))] {
             let query_string = web_sys::window()?.location().search().ok()?;
 
             wgpu_examples::framework::parse_url_query_string(&query_string, "example").map(String::from)
@@ -214,7 +214,7 @@ fn get_example_name() -> Option<String> {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 fn print_examples() {
     // Get the document, header, and body elements.
     let document = web_sys::window().unwrap().document().unwrap();
@@ -249,10 +249,10 @@ fn print_examples() {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 fn print_unknown_example(_result: Option<String>) {}
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 fn print_unknown_example(result: Option<String>) {
     if let Some(example) = result {
         println!("Unknown example: {example}");
@@ -267,7 +267,7 @@ fn print_unknown_example(result: Option<String>) {
 }
 
 fn main() {
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     print_examples();
 
     let Some(example) = get_example_name() else {

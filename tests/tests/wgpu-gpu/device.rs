@@ -14,7 +14,7 @@ pub fn all_tests(vec: &mut Vec<GpuTestInitializer>) {
         DEVICE_AND_QUEUE_HAVE_DIFFERENT_IDS,
     ]);
 
-    #[cfg(not(all(target_arch = "wasm32", not(target_os = "emscripten"))))]
+    #[cfg(not(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten"))))]
     {
         vec.extend([
             DEVICE_LIFETIME_CHECK,
@@ -54,7 +54,7 @@ static CROSS_DEVICE_BIND_GROUP_USAGE: GpuTestConfiguration = GpuTestConfiguratio
         ctx.async_poll(wgpu::PollType::Poll).await.unwrap();
     });
 
-#[cfg(not(all(target_arch = "wasm32", not(target_os = "emscripten"))))]
+#[cfg(not(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten"))))]
 #[gpu_test]
 static DEVICE_LIFETIME_CHECK: GpuTestConfiguration = GpuTestConfiguration::new()
     .parameters(TestParameters::default().enable_noop())
@@ -81,7 +81,7 @@ static DEVICE_LIFETIME_CHECK: GpuTestConfiguration = GpuTestConfiguration::new()
         );
     });
 
-#[cfg(not(all(target_arch = "wasm32", not(target_os = "emscripten"))))]
+#[cfg(not(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten"))))]
 #[gpu_test]
 static MULTIPLE_DEVICES: GpuTestConfiguration = GpuTestConfiguration::new()
     .parameters(TestParameters::default().enable_noop())
@@ -105,7 +105,7 @@ static MULTIPLE_DEVICES: GpuTestConfiguration = GpuTestConfiguration::new()
             .expect("failed to create device");
     });
 
-#[cfg(not(all(target_arch = "wasm32", not(target_os = "emscripten"))))]
+#[cfg(not(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten"))))]
 #[gpu_test]
 static REQUEST_DEVICE_ERROR_MESSAGE_NATIVE: GpuTestConfiguration = GpuTestConfiguration::new()
     .parameters({
@@ -130,7 +130,7 @@ static REQUEST_DEVICE_ERROR_MESSAGE_NATIVE: GpuTestConfiguration = GpuTestConfig
 /// Check that `RequestDeviceError`s produced have some diagnostic information.
 ///
 /// Note: this is a wasm *and* native test. On wasm it is run directly; on native, indirectly
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+#[cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), wasm_bindgen_test::wasm_bindgen_test)]
 async fn request_device_error_message() {
     // Not using initialize_test() because that doesn't let us catch the error
     // nor .await anything
@@ -156,7 +156,7 @@ async fn request_device_error_message() {
 
     let device_error = device_error.to_string();
     cfg_if::cfg_if! {
-        if #[cfg(all(target_arch = "wasm32", not(feature = "webgl")))] {
+        if #[cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(feature = "webgl")))] {
             // On WebGPU, so the error we get will be from the browser WebGPU API.
             // Per the WebGPU specification this should be a `TypeError` when features are not
             // available, <https://gpuweb.github.io/gpuweb/#dom-gpuadapter-requestdevice>,

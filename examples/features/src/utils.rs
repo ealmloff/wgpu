@@ -1,10 +1,10 @@
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 use std::io::Write;
 use std::time::Instant;
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 fn get_content_div() -> web_sys::Element {
     web_sys::window()
         .and_then(|window| window.document())
@@ -13,7 +13,7 @@ fn get_content_div() -> web_sys::Element {
 }
 
 /// Replaces the site body with a message telling the user to open the console and use that.
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 pub fn add_web_nothing_to_see_msg() {
     get_content_div().set_inner_html(
         "<h1>This is a compute example, so there's nothing to see here. Open the console!</h1>",
@@ -21,7 +21,7 @@ pub fn add_web_nothing_to_see_msg() {
 }
 
 /// Outputs a vector of RGBA bytes as a png image with the given dimensions on the given path.
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 pub fn output_image_native(image_data: Vec<u8>, texture_dims: (usize, usize), path: String) {
     let mut png_data = Vec::<u8>::with_capacity(image_data.len());
     let mut encoder = png::Encoder::new(
@@ -47,7 +47,7 @@ pub fn output_image_native(image_data: Vec<u8>, texture_dims: (usize, usize), pa
 ///
 /// This function makes use of a hidden staging canvas which the data is copied to in
 /// order to create a data URL.
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 pub fn output_image_wasm(image_data: Vec<u8>, texture_dims: (usize, usize)) {
     let document = web_sys::window().unwrap().document().unwrap();
     let content_div = get_content_div();
@@ -132,7 +132,7 @@ pub fn output_image_wasm(image_data: Vec<u8>, texture_dims: (usize, usize)) {
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 fn create_staging_canvas(document: &web_sys::Document) -> web_sys::HtmlCanvasElement {
     let content_div = get_content_div();
     let new_canvas = document
@@ -148,7 +148,7 @@ fn create_staging_canvas(document: &web_sys::Document) -> web_sys::HtmlCanvasEle
     new_canvas
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 fn create_output_image_element(document: &web_sys::Document) -> web_sys::HtmlImageElement {
     let content_div = get_content_div();
     let new_image = document
@@ -162,7 +162,7 @@ fn create_output_image_element(document: &web_sys::Document) -> web_sys::HtmlIma
     new_image
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 /// If the environment variable `WGPU_ADAPTER_NAME` is set, this function will attempt to
 /// initialize the adapter with that name. If it is not set, it will attempt to initialize
 /// the adapter which supports the required features.
@@ -227,7 +227,7 @@ pub(crate) async fn get_adapter_with_capabilities_or_from_env(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
 pub(crate) async fn get_adapter_with_capabilities_or_from_env(
     instance: &wgpu::Instance,
     required_features: &wgpu::Features,

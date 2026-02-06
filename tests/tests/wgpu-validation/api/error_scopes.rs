@@ -1,4 +1,4 @@
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 use std::{
     panic::{resume_unwind, AssertUnwindSafe},
     sync::Arc,

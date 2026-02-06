@@ -1,4 +1,4 @@
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 #![expect(clippy::disallowed_types)] // We're outside of the main wgpu codebase
 
 //! Benchmarking framework for `wgpu`.

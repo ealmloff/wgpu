@@ -10,12 +10,16 @@ readme = "README.md"
 repository = "https://github.com/gfx-rs/wgpu"
 description = "WebGPU implementation for Deno"
 
+[features]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = []
+
 [lib]
 path = "lib.rs"
 
 # We make all dependencies conditional on not being wasm,
 # so the whole workspace can built as wasm.
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 wgpu-core = { workspace = true, features = [
     "trace",
     "replay",

@@ -182,9 +182,9 @@ impl Drop for Queue {
                 self.device.raw().wait(
                     fence.as_ref(),
                     last_successful_submission_index,
-                    #[cfg(not(target_arch = "wasm32"))]
+                    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
                     Some(core::time::Duration::from_millis(timeout_ms)),
-                    #[cfg(target_arch = "wasm32")]
+                    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
                     Some(core::time::Duration::ZERO), // WebKit and Chromium don't support a non-0 timeout
                 )
             };
@@ -198,11 +198,11 @@ impl Drop for Queue {
                     // backends since getBufferSubData is synchronous with respect to the other previously enqueued GL commands.
                     // Relying on this behavior breaks the clean abstraction wgpu-hal tries to maintain and
                     // we should find ways to improve this. See https://github.com/gfx-rs/wgpu/issues/6538.
-                    #[cfg(target_arch = "wasm32")]
+                    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
                     {
                         break;
                     }
-                    #[cfg(not(target_arch = "wasm32"))]
+                    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
                     {
                         if is_last_iter {
                             panic!(

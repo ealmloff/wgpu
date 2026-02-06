@@ -1,4 +1,4 @@
-#![cfg(not(target_arch = "wasm32"))]
+#![cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
 //! Infrastructure for the native, `cargo-nextest` based harness.
 //!
 //! This is largly used by [`gpu_test_main`](crate::gpu_test_main) and [`gpu_test`](crate::gpu_test).

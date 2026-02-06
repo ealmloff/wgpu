@@ -10,12 +10,12 @@ use wgpu::{
 /// Must be synchronized with the definition on wgpu-info/src/report.rs.
 #[derive(Deserialize)]
 pub(crate) struct GpuReport {
-    #[cfg_attr(target_arch = "wasm32", allow(unused))]
+    #[cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), allow(unused))]
     pub devices: Vec<AdapterReport>,
 }
 
 impl GpuReport {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     /// Creates a new GpuReport with a single noop adapter.
     pub(crate) fn noop_only() -> Self {
         GpuReport {
@@ -29,7 +29,7 @@ impl GpuReport {
         }
     }
 
-    #[cfg_attr(target_arch = "wasm32", allow(unused))]
+    #[cfg_attr(any(target_arch = "wasm32", feature = "wasm-bindgen"), allow(unused))]
     pub(crate) fn from_json(file: &str) -> serde_json::Result<Self> {
         profiling::scope!("Parsing .gpuconfig");
         serde_json::from_str(file)

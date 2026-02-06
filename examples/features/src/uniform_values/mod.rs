@@ -346,14 +346,14 @@ async fn run(event_loop: EventLoop<()>, window: Arc<Window>) {
 pub fn main() {
     let event_loop = EventLoop::new().unwrap();
     #[cfg_attr(
-        not(target_arch = "wasm32"),
+        not(any(target_arch = "wasm32", feature = "wasm-bindgen")),
         expect(unused_mut, reason = "`wasm32` re-assigns to specify canvas")
     )]
     let mut builder = winit::window::WindowBuilder::new()
         .with_title("Remember: Use U/D to change sample count!")
         .with_inner_size(winit::dpi::LogicalSize::new(900, 900));
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     {
         use wasm_bindgen::JsCast;
         use winit::platform::web::WindowBuilderExtWebSys;
@@ -370,12 +370,12 @@ pub fn main() {
     let window = builder.build(&event_loop).unwrap();
 
     let window = Arc::new(window);
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))]
     {
         env_logger::builder().format_timestamp_nanos().init();
         pollster::block_on(run(event_loop, window));
     }
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))]
     {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
         console_log::init().expect("could not initialize logger");

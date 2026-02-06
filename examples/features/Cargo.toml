@@ -29,6 +29,8 @@ test = false
 default = []
 webgl = ["wgpu/webgl"]
 webgpu = ["wgpu/webgpu"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu/wasm-bindgen"]
 
 [dependencies]
 bytemuck.workspace = true
@@ -52,11 +54,11 @@ winit.workspace = true
 [dev-dependencies]
 wgpu-test.workspace = true
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 env_logger.workspace = true
 wgpu = { workspace = true, features = ["trace"] }
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
+[target.'cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))'.dependencies]
 console_error_panic_hook.workspace = true
 console_log.workspace = true
 fern.workspace = true
@@ -81,7 +83,7 @@ web-sys = { workspace = true, features = [
     "CanvasRenderingContext2d",
 ] }
 
-[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+[target.'cfg(any(target_arch = "wasm32", feature = "wasm-bindgen"))'.dev-dependencies]
 wasm-bindgen-test.workspace = true
 
 [lints.clippy]

@@ -177,6 +177,9 @@ std = ["raw-window-handle/std", "wgpu-types/std", "wgpu-core?/std"]
 ## based on whether `std` is enabled or not.
 parking_lot = ["dep:parking_lot"]
 
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu-types/wasm-bindgen", "wgpu-core?/wasm-bindgen"]
+
 #########################
 # Standard Dependencies #
 #########################
@@ -206,7 +209,7 @@ static_assertions.workspace = true
 ###################
 # Not Webassembly #
 ###################
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 # Needed for only wgpu-core backend. Not optional as only wgpu-core backend exists on native platforms.
 wgpu-core = { workspace = true, features = [
     "renderdoc",
@@ -220,7 +223,7 @@ smallvec.workspace = true
 ###############
 # Webassembly #
 ###############
-[target.'cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))'.dependencies]
+[target.'cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")))'.dependencies]
 # Needed for all backends
 js-sys = { workspace = true, optional = true, features = ["default"] }
 wasm-bindgen = { workspace = true, optional = true }

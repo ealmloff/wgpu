@@ -11,7 +11,11 @@ unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(trick_rust_analyzer_into_highlighting_interpolated_bits)',
 ] }
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[features]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = []
+
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 # The dependencies in this config have no transitive dependencies.
 anyhow.workspace = true
 env_logger.workspace = true

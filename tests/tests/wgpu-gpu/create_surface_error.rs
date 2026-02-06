@@ -2,7 +2,7 @@
 
 /// This test applies to those cfgs that can create a surface from a canvas, which
 /// include WebGL and WebGPU, but *not* Emscripten GLES.
-#[cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))]
+#[cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")))]
 #[wasm_bindgen_test::wasm_bindgen_test]
 fn canvas_get_context_returned_null() {
     // Not using the normal testing infrastructure because that goes straight to creating the canvas for us.

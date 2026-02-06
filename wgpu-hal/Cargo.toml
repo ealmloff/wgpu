@@ -175,6 +175,8 @@ fragile-send-sync-non-atomic-wasm = [
     "wgpu-types/fragile-send-sync-non-atomic-wasm",
 ]
 portable-atomic = ["dep:portable-atomic", "dep:portable-atomic-util"]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = ["wgpu-types/wasm-bindgen"]
 
 ###################################
 ### Internal Debugging Features ###
@@ -228,7 +230,7 @@ glow = { workspace = true, optional = true }
 ### Platform: Native ###
 ########################
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(any(target_arch = "wasm32", feature = "wasm-bindgen")))'.dependencies]
 # Backend: Vulkan and Dx12
 gpu-allocator = { workspace = true, optional = true }
 # Backend: Vulkan
@@ -306,7 +308,7 @@ ndk-sys = { workspace = true, optional = true }
 ### Platform: Webassembly ###
 #############################
 
-[target.'cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))'.dependencies]
+[target.'cfg(all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")))'.dependencies]
 # Backend: GLES
 wasm-bindgen = { workspace = true, optional = true }
 web-sys = { workspace = true, optional = true, features = [
@@ -350,7 +352,7 @@ naga = { workspace = true, features = ["wgsl-in", "termcolor"] }
 winit.workspace = true                                           # for "halmark" example
 
 ### Platform: Windows + MacOS + Linux for "raw-gles" example ###
-[target.'cfg(not(any(target_arch = "wasm32", target_os = "ios", target_os = "visionos")))'.dev-dependencies]
+[target.'cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), target_os = "ios", target_os = "visionos")))'.dev-dependencies]
 glutin-winit = { workspace = true, features = ["egl", "wgl", "wayland", "x11"] }
 glutin = { workspace = true, features = ["egl", "wgl", "wayland", "x11"] }
 # temporary compatibility for glutin-winit

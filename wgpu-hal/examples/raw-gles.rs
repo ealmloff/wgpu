@@ -10,7 +10,7 @@
 
 extern crate wgpu_hal as hal;
 
-#[cfg(not(any(target_arch = "wasm32", target_os = "ios", target_os = "visionos")))]
+#[cfg(not(any(any(target_arch = "wasm32", feature = "wasm-bindgen"), target_os = "ios", target_os = "visionos")))]
 fn main() {
     use std::{ffi::CString, num::NonZeroU32};
 
@@ -258,7 +258,7 @@ fn main() {
 }
 
 #[cfg(any(
-    all(target_arch = "wasm32", not(target_os = "emscripten")),
+    all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")),
     target_os = "ios",
     target_os = "visionos"
 ))]
@@ -267,7 +267,7 @@ fn main() {
 }
 
 #[cfg(not(any(
-    all(target_arch = "wasm32", not(target_os = "emscripten")),
+    all(any(target_arch = "wasm32", feature = "wasm-bindgen"), not(target_os = "emscripten")),
     target_os = "ios",
     target_os = "visionos"
 )))]

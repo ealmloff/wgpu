@@ -12,6 +12,10 @@ rust-version.workspace = true
 exclude = ["Cargo.lock"]
 publish = false
 
+[features]
+# Enable the wasm-bindgen code path outside of wasm32.
+wasm-bindgen = []
+
 [lib]
 proc-macro = true
 
