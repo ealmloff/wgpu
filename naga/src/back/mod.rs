@@ -305,6 +305,10 @@ impl crate::Expression {
             // More info - https://github.com/gfx-rs/naga/pull/914
             // And https://github.com/gfx-rs/naga/issues/910
             crate::Expression::Load { .. } => 1,
+            // cooperative loads read threadgroup memory: inlining a
+            // single-use load at its consumer can sink it past a control
+            // barrier, racing the next refill of the tile it reads
+            crate::Expression::CooperativeLoad { .. } => 1,
             // cache expressions that are referenced multiple times
             _ => 2,
         }
