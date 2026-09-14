@@ -23,6 +23,11 @@ use core::fmt::Write;
 /// [`write_type_inner`]: TypeContext::write_type_inner
 /// [`type_name`]: TypeContext::type_name
 pub trait TypeContext {
+    /// Emit Dawn's experimental subgroup-matrix types instead of Naga's native dialect.
+    fn browser_subgroup_matrix(&self) -> bool {
+        false
+    }
+
     /// Return the [`Type`] referred to by `handle`.
     ///
     /// [`Type`]: crate::Type
@@ -323,6 +328,21 @@ where
             scalar,
             role,
         } => {
+            if ctx.browser_subgroup_matrix() {
+                let role = match role {
+                    crate::CooperativeRole::A => "left",
+                    crate::CooperativeRole::B => "right",
+                    crate::CooperativeRole::C => "result",
+                };
+                write!(
+                    out,
+                    "subgroup_matrix_{role}<{}, {}, {}>",
+                    scalar.try_to_wgsl().unwrap_or_default(),
+                    columns as u32,
+                    rows as u32
+                )?;
+                return Ok(());
+            }
             write!(
                 out,
                 "coop_mat{}x{}<{},{}>",

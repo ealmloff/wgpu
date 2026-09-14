@@ -711,7 +711,7 @@ fn map_map_mode(mode: crate::MapMode) -> u32 {
     }
 }
 
-const FEATURES_MAPPING: [(wgt::Features, webgpu_sys::GpuFeatureName); 17] = [
+const FEATURES_MAPPING: [(wgt::Features, webgpu_sys::GpuFeatureName); 16] = [
     (
         wgt::Features::DEPTH_CLIP_CONTROL,
         webgpu_sys::GpuFeatureName::DepthClipControl,
@@ -776,10 +776,6 @@ const FEATURES_MAPPING: [(wgt::Features, webgpu_sys::GpuFeatureName); 17] = [
         wgt::Features::CLIP_DISTANCES,
         webgpu_sys::GpuFeatureName::ClipDistances,
     ),
-    (
-        wgt::Features::SUBGROUP,
-        webgpu_sys::GpuFeatureName::Subgroups,
-    ),
 ];
 
 fn map_wgt_features(supported_features: webgpu_sys::GpuSupportedFeatures) -> wgt::Features {
@@ -790,7 +786,27 @@ fn map_wgt_features(supported_features: webgpu_sys::GpuSupportedFeatures) -> wgt
             _ => {}
         }
     }
+    if supported_features.has("subgroups") {
+        features |= wgt::Features::SUBGROUP;
+    }
+    if supported_features.has("subgroups")
+        && supported_features.has("chromium-experimental-subgroup-matrix")
+    {
+        features |= wgt::Features::EXPERIMENTAL_COOPERATIVE_MATRIX;
+    }
     features
+}
+
+// These experimental adapter properties are absent from the generated stable
+// bindings. Missing/invalid values preserve the conservative upstream defaults.
+fn experimental_property(object: &JsValue, name: &str) -> JsValue {
+    js_sys::Reflect::get(object, &JsValue::from_str(name)).unwrap_or(JsValue::UNDEFINED)
+}
+
+fn experimental_u32(object: &JsValue, name: &str) -> Option<u32> {
+    let value = experimental_property(object, name).as_f64()?;
+    (value.is_finite() && value >= 1.0 && value <= u32::MAX as f64 && value.fract() == 0.0)
+        .then_some(value as u32)
 }
 
 fn map_wgt_limits(limits: webgpu_sys::GpuSupportedLimits) -> wgt::Limits {
@@ -872,8 +888,10 @@ fn map_adapter_info(adapter_info: &webgpu_sys::GpuAdapterInfo) -> wgt::AdapterIn
         driver: String::new(),
         driver_info: String::new(),
         backend: wgt::Backend::BrowserWebGpu,
-        subgroup_min_size: wgt::MINIMUM_SUBGROUP_MIN_SIZE,
-        subgroup_max_size: wgt::MAXIMUM_SUBGROUP_MAX_SIZE,
+        subgroup_min_size: experimental_u32(adapter_info.as_ref(), "subgroupMinSize")
+            .unwrap_or(wgt::MINIMUM_SUBGROUP_MIN_SIZE),
+        subgroup_max_size: experimental_u32(adapter_info.as_ref(), "subgroupMaxSize")
+            .unwrap_or(wgt::MAXIMUM_SUBGROUP_MAX_SIZE),
         transient_saves_memory: false,
     }
 }
@@ -1703,6 +1721,19 @@ impl dispatch::AdapterInterface for WebAdapter {
                 }
             })
             .collect::<js_sys::Array>();
+        if desc.required_features.contains(wgt::Features::SUBGROUP) {
+            required_features.push(&JsValue::from_str("subgroups"));
+        }
+        if desc
+            .required_features
+            .contains(wgt::Features::EXPERIMENTAL_COOPERATIVE_MATRIX)
+        {
+            required_features.push(&JsValue::from_str("chromium-experimental-subgroup-matrix"));
+            // Dawn requires subgroups along with the matrix extension.
+            if !desc.required_features.contains(wgt::Features::SUBGROUP) {
+                required_features.push(&JsValue::from_str("subgroups"));
+            }
+        }
         mapped_desc.set_required_features(&required_features);
 
         if let Some(label) = desc.label {
@@ -1751,7 +1782,37 @@ impl dispatch::AdapterInterface for WebAdapter {
     }
 
     fn cooperative_matrix_properties(&self) -> Vec<wgt::CooperativeMatrixProperties> {
-        Vec::new()
+        if !dispatch::AdapterInterface::features(self)
+            .contains(wgt::Features::EXPERIMENTAL_COOPERATIVE_MATRIX)
+        {
+            return Vec::new();
+        }
+        let configs = experimental_property(self.inner.info().as_ref(), "subgroupMatrixConfigs");
+        if !js_sys::Array::is_array(&configs) {
+            return Vec::new();
+        }
+        fn scalar(object: &JsValue, name: &str) -> Option<wgt::CooperativeScalarType> {
+            match experimental_property(object, name).as_string()?.as_str() {
+                "f32" => Some(wgt::CooperativeScalarType::F32),
+                "f16" => Some(wgt::CooperativeScalarType::F16),
+                "i32" => Some(wgt::CooperativeScalarType::I32),
+                "u32" => Some(wgt::CooperativeScalarType::U32),
+                _ => None,
+            }
+        }
+        js_sys::Array::from(&configs)
+            .iter()
+            .filter_map(|config| {
+                Some(wgt::CooperativeMatrixProperties {
+                    m_size: experimental_u32(&config, "M")?,
+                    n_size: experimental_u32(&config, "N")?,
+                    k_size: experimental_u32(&config, "K")?,
+                    ab_type: scalar(&config, "componentType")?,
+                    cr_type: scalar(&config, "resultComponentType")?,
+                    saturating_accumulation: false,
+                })
+            })
+            .collect()
     }
 }
 impl Drop for WebAdapter {
@@ -1889,7 +1950,7 @@ impl dispatch::DeviceInterface for WebDevice {
                 })
             })?;
 
-            let writer_flags = naga::back::wgsl::WriterFlags::empty();
+            let writer_flags = naga::back::wgsl::WriterFlags::BROWSER_SUBGROUP_MATRIX;
             let wgsl_text = back::wgsl::write_string(module, &module_info, writer_flags).unwrap();
             Ok(webgpu_sys::GpuShaderModuleDescriptor::new(
                 wgsl_text.as_str(),
@@ -1902,6 +1963,19 @@ impl dispatch::DeviceInterface for WebDevice {
                 WebShaderCompilationInfo::Transformed { compilation_info },
             ),
         };
+        // Naga 29 emits subgroup operations but omits their browser enable
+        // declaration. Only add it to transformed IR on a device that granted
+        // subgroups; direct WGSL remains the caller's responsibility.
+        if matches!(
+            &compilation_info,
+            WebShaderCompilationInfo::Transformed { .. }
+        ) && self.inner.features().has("subgroups")
+        {
+            let code = descriptor.get_code();
+            if !code.contains("enable subgroups;") {
+                descriptor.set_code(&format!("enable subgroups;\n{code}"));
+            }
+        }
         if let Some(label) = desc.label {
             descriptor.set_label(label);
         }

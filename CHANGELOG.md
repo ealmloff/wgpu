@@ -1,5 +1,11 @@
 # Change Log
 
+## Fusor browser matrix support
+
+- Request advertised browser subgroups and matrix capabilities and serialize cooperative matrix IR using Dawn WGSL.
+- Pin the wgpu package manifest to the published 29.0.4 dependencies so native backends retain the tested registry dependency graph.
+
+
 <!--
 Please add your PR to the changelog! Choose from a top level and bottom
 level category, then write your changes like follows:
