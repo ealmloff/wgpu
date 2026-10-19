@@ -74,7 +74,6 @@ _atomic_compare_exchange_result_Sint_4_ naga_atomic_compare_exchange_weak_explic
 
 struct cs_mainInput {
 };
-[[max_total_threads_per_threadgroup(2)]]
 kernel void cs_main(
   metal::uint3 id [[thread_position_in_threadgroup]]
 , device metal::atomic_uint& storage_atomic_scalar [[user(fake0)]]

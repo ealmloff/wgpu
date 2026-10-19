@@ -898,17 +898,26 @@ fn compute_workgroup_size_reaches_metal_compiler() {
     )
     .validate(&module)
     .unwrap();
-    let (source, _) = write_string(
-        &module,
-        &info,
-        &Options::default(),
-        &PipelineOptions::default(),
-    )
-    .unwrap();
-    assert!(source.contains("[[max_total_threads_per_threadgroup(1024)]]\nkernel void wide("));
-    assert!(source.contains("[[max_total_threads_per_threadgroup(16)]]\nkernel void small("));
-    assert_eq!(
-        source.matches("max_total_threads_per_threadgroup").count(),
-        2
-    );
+    for lang_version in [(1, 0), (2, 0), (2, 1), (2, 4)] {
+        let options = Options {
+            lang_version,
+            ..Options::default()
+        };
+        let (source, _) =
+            write_string(&module, &info, &options, &PipelineOptions::default()).unwrap();
+        if lang_version >= (2, 1) {
+            assert!(
+                source.contains("[[max_total_threads_per_threadgroup(1024)]]\nkernel void wide(")
+            );
+            assert!(
+                source.contains("[[max_total_threads_per_threadgroup(16)]]\nkernel void small(")
+            );
+            assert_eq!(
+                source.matches("max_total_threads_per_threadgroup").count(),
+                2
+            );
+        } else {
+            assert!(!source.contains("max_total_threads_per_threadgroup"));
+        }
+    }
 }

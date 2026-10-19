@@ -36,7 +36,6 @@ _atomic_compare_exchange_result_Uint_4_ naga_atomic_compare_exchange_weak_explic
 }
 constant int o = 2;
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void f(
   metal::uint3 __local_invocation_id [[thread_position_in_threadgroup]]
 , threadgroup metal::atomic_uint& a

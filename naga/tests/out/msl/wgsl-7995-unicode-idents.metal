@@ -13,7 +13,6 @@ float compute(
     return u03b8_2_;
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   device float const& asdf [[user(fake0)]]
 ) {

@@ -31,7 +31,6 @@ constant type_10 cz6_ = type_10 {};
 constant Foo cz7_ = Foo {};
 constant metal::uint2 cp1_ = metal::uint2(0u);
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     Foo foo = {};

@@ -172,7 +172,6 @@ vertex vertex_mainOutput vertex_main(
 }
 
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void compute_main(
   metal::texture2d<float, metal::access::sample> tex_plane0_ [[texture(0)]]
 , metal::texture2d<float, metal::access::sample> tex_plane1_ [[texture(1)]]

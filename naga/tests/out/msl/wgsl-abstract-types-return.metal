@@ -48,7 +48,6 @@ metal::float2 return_vec2f32_const_ai(
     return metal::float2(1.0);
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     int _e0 = return_i32_ai();

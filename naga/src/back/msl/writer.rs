@@ -7246,7 +7246,11 @@ template <typename A>
                     .ok_or_else(|| {
                         Error::GenericValidation("workgroup size exceeds a u32".into())
                     })?;
-                writeln!(self.out, "[[max_total_threads_per_threadgroup({threads})]]")?;
+                // This attribute was introduced in MSL 2.1. Older language
+                // targets must retain their original, compatible emission.
+                if options.lang_version >= (2, 1) {
+                    writeln!(self.out, "[[max_total_threads_per_threadgroup({threads})]]")?;
+                }
             }
 
             // Write the entry point function's name, and begin its argument list.

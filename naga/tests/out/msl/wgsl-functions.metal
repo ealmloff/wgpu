@@ -45,7 +45,6 @@ uint test_packed_integer_dot_product(
     return c_8_;
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     metal::float2 _e0 = test_fma();

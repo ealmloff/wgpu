@@ -198,7 +198,6 @@ metal::ulong2 test_f32_to_u64_vec(
     return naga_f2u64(f_15);
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     test_const_eval();

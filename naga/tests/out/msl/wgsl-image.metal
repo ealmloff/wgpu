@@ -12,7 +12,6 @@ metal::int2 naga_mod(metal::int2 lhs, metal::int2 rhs) {
 
 struct main_Input {
 };
-[[max_total_threads_per_threadgroup(16)]]
 kernel void main_(
   metal::uint3 local_id [[thread_position_in_threadgroup]]
 , metal::texture2d<uint, metal::access::sample> image_mipmapped_src [[user(fake0)]]
@@ -53,7 +52,6 @@ uint naga_f2u32(float value) {
 
 struct depth_loadInput {
 };
-[[max_total_threads_per_threadgroup(16)]]
 kernel void depth_load(
   metal::uint3 local_id_1 [[thread_position_in_threadgroup]]
 , metal::depth2d_ms<float, metal::access::read> image_depth_multisampled_src [[user(fake0)]]

@@ -5,7 +5,6 @@
 using metal::uint;
 
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     metal::float3 a = metal::float3(0.0, 0.0, 1.0);

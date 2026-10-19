@@ -186,7 +186,6 @@ void set_dynamic_array_constant_index(
     return;
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   device Globals& globals [[user(fake0)]]
 , constant _mslBufferSizes& _buffer_sizes [[user(fake0)]]

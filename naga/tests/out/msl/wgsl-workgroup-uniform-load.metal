@@ -11,7 +11,6 @@ constant uint SIZE = 128u;
 
 struct test_workgroupUniformLoadInput {
 };
-[[max_total_threads_per_threadgroup(4)]]
 kernel void test_workgroupUniformLoad(
   metal::uint3 workgroup_id [[threadgroup_position_in_grid]]
 , metal::uint3 __local_invocation_id [[thread_position_in_threadgroup]]

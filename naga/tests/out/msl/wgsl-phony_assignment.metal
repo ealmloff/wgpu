@@ -12,7 +12,6 @@ int five(
 
 struct main_Input {
 };
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   metal::uint3 id [[thread_position_in_grid]]
 , constant float& binding [[user(fake0)]]

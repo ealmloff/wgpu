@@ -92,7 +92,6 @@ uint exchange_atomic_dynamic_sized_array_static_index(
     return _e4;
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   device Globals& globals [[user(fake0)]]
 , constant _mslBufferSizes& _buffer_sizes [[user(fake0)]]

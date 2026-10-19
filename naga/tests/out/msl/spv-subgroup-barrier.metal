@@ -12,7 +12,6 @@ void function(
     return;
 }
 
-[[max_total_threads_per_threadgroup(64)]]
 kernel void main_(
 ) {
     function();

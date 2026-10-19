@@ -52,7 +52,6 @@ metal::float4 mock_function(
     return ((((_e18 + _e22) + _e25) + metal::float4(_e29)) + metal::float4(_e34)) + _e38;
 }
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   metal::uint3 __local_invocation_id [[thread_position_in_threadgroup]]
 , device InStorage const& in_storage [[user(fake0)]]

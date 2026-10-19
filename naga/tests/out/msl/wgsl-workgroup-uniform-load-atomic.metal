@@ -14,7 +14,6 @@ struct AtomicStruct {
 
 struct test_atomic_workgroup_uniform_loadInput {
 };
-[[max_total_threads_per_threadgroup(64)]]
 kernel void test_atomic_workgroup_uniform_load(
   metal::uint3 workgroup_id [[threadgroup_position_in_grid]]
 , metal::uint3 local_id [[thread_position_in_threadgroup]]

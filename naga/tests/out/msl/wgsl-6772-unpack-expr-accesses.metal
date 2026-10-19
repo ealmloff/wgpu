@@ -5,7 +5,6 @@
 using metal::uint;
 
 
-[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     int phony = (int4(12u, 12u >> 8, 12u >> 16, 12u >> 24) << 24 >> 24)[2];

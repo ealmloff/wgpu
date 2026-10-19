@@ -152,7 +152,6 @@ void abstract_access(
     return;
 }
 
-[[max_total_threads_per_threadgroup(6)]]
 kernel void main_(
 ) {
     swizzle_of_compose();

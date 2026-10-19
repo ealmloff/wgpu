@@ -45,7 +45,6 @@ vertex no_padding_vertOutput no_padding_vert(
 }
 
 
-[[max_total_threads_per_threadgroup(16)]]
 kernel void no_padding_comp(
   constant NoPadding& no_padding_uniform [[user(fake0)]]
 , device NoPadding const& no_padding_storage [[user(fake0)]]
@@ -91,7 +90,6 @@ vertex needs_padding_vertOutput needs_padding_vert(
 }
 
 
-[[max_total_threads_per_threadgroup(16)]]
 kernel void needs_padding_comp(
   constant NeedsPadding& needs_padding_uniform [[user(fake0)]]
 , device NeedsPadding const& needs_padding_storage [[user(fake0)]]
