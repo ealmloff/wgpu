@@ -5,6 +5,7 @@
 using metal::uint;
 
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void csLoad(
   metal::texture2d<float, metal::access::read> s_r_r [[user(fake0)]]
 , metal::texture2d<float, metal::access::read> s_rg_r [[user(fake0)]]
@@ -17,6 +18,7 @@ kernel void csLoad(
 }
 
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void csStore(
   metal::texture2d<float, metal::access::write> s_r_w [[user(fake0)]]
 , metal::texture2d<float, metal::access::write> s_rg_w [[user(fake0)]]

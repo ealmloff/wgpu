@@ -30,6 +30,7 @@ constant uint NUM_PARTICLES = 1500u;
 
 struct main_Input {
 };
+[[max_total_threads_per_threadgroup(64)]]
 kernel void main_(
   metal::uint3 global_invocation_id [[thread_position_in_grid]]
 , constant SimParams& params [[buffer(0)]]

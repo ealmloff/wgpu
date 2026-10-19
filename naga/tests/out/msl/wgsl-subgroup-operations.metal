@@ -11,6 +11,7 @@ struct Structure {
 
 struct main_Input {
 };
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   uint num_subgroups [[simdgroups_per_threadgroup]]
 , uint subgroup_size [[threads_per_simdgroup]]

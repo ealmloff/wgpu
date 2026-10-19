@@ -326,6 +326,7 @@ fragment foo_fragOutput foo_frag(
 }
 
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void foo_compute(
 ) {
     assign_through_ptr();

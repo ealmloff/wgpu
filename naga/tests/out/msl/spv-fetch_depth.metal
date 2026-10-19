@@ -22,6 +22,7 @@ void function(
     return;
 }
 
+[[max_total_threads_per_threadgroup(32)]]
 kernel void cull_fetch_depth(
   device type_2& global [[user(fake0)]]
 , device type_4 const& global_1 [[user(fake0)]]

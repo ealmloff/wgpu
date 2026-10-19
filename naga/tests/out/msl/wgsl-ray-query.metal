@@ -76,6 +76,7 @@ metal::float3 get_torus_normal(
     return metal::normalize(world_point - world_point_on_guiding_line);
 }
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   metal::raytracing::instance_acceleration_structure acc_struct [[user(fake0)]]
 , device Output& output [[user(fake0)]]
@@ -90,6 +91,7 @@ kernel void main_(
 }
 
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_candidate(
   metal::raytracing::instance_acceleration_structure acc_struct [[user(fake0)]]
 ) {

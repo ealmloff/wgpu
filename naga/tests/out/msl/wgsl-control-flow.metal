@@ -308,6 +308,7 @@ void loop_switch_omit_continue_variable_checks(
     return;
 }
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     control_flow();

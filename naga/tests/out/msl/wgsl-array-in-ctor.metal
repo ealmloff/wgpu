@@ -11,6 +11,7 @@ struct Ah {
     type_1 inner;
 };
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void cs_main(
   device Ah const& ah [[user(fake0)]]
 ) {

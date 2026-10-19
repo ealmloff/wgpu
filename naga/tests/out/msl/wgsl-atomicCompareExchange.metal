@@ -72,6 +72,7 @@ _atomic_compare_exchange_result_Uint_4_ naga_atomic_compare_exchange_weak_explic
 }
 constant uint SIZE = 128u;
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void test_atomic_compare_exchange_i32_(
   device type_3& arr_i32_ [[user(fake0)]]
 ) {
@@ -123,6 +124,7 @@ kernel void test_atomic_compare_exchange_i32_(
 }
 
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void test_atomic_compare_exchange_u32_(
   device type_5& arr_u32_ [[user(fake0)]]
 ) {

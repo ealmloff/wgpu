@@ -13,6 +13,7 @@ constant float height = 4.6;
 constant float inferred_f32_ = 2.718;
 constant uint auto_conversion = 0u;
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     float gain_x_10_ = 11.0;

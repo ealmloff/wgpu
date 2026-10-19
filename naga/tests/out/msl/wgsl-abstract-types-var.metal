@@ -365,6 +365,7 @@ void mixed_constant_and_runtime_arguments(
     return;
 }
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     metal::int2 xvipaiai_1 = metal::int2(42, 43);

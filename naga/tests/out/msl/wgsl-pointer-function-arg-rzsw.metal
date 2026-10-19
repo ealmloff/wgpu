@@ -138,6 +138,7 @@ void let_binding(
     return;
 }
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     type_9 vec_ = {};

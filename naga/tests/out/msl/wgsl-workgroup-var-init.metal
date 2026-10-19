@@ -19,6 +19,7 @@ struct WStruct {
     type_4 atom_arr;
 };
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   metal::uint3 __local_invocation_id [[thread_position_in_threadgroup]]
 , threadgroup WStruct& w_mem

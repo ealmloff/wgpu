@@ -10,6 +10,7 @@ constant metal::int4 g4_ = metal::int4 {};
 constant metal::int4 g5_ = metal::int4(1);
 constant metal::float2x2 g6_ = metal::float2x2(metal::float2(0.0, 0.0), metal::float2(0.0, 0.0));
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
 ) {
     int g0x = 1;

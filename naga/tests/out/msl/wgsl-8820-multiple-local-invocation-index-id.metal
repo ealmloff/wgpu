@@ -11,6 +11,7 @@ struct Input {
 
 struct compute1_Input {
 };
+[[max_total_threads_per_threadgroup(1)]]
 kernel void compute1_(
   metal::uint3 local_invocation_id [[thread_position_in_threadgroup]]
 , uint local_invocation_index [[thread_index_in_threadgroup]]

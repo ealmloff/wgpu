@@ -36,6 +36,7 @@ struct RayIntersection {
     metal::float4x3 world_to_object;
 };
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_candidate(
   metal::raytracing::instance_acceleration_structure acc_struct [[user(fake0)]]
 ) {
