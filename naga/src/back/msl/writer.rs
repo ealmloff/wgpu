@@ -7231,6 +7231,28 @@ template <typename A>
                 }
             }
 
+            // Metal otherwise chooses a shader-specific threadgroup limit from
+            // register pressure, which can be smaller than the declared size.
+            // Carry the source contract into compilation, before resource
+            // allocation, so a valid dispatch cannot silently do no work.
+            if ep.stage == crate::ShaderStage::Compute {
+                if ep.workgroup_size_overrides.is_some() {
+                    return Err(Error::Override);
+                }
+                let threads = ep
+                    .workgroup_size
+                    .iter()
+                    .try_fold(1u32, |n, d| n.checked_mul(*d))
+                    .ok_or_else(|| {
+                        Error::GenericValidation("workgroup size exceeds a u32".into())
+                    })?;
+                // This attribute was introduced in MSL 2.1. Older language
+                // targets must retain their original, compatible emission.
+                if options.lang_version >= (2, 1) {
+                    writeln!(self.out, "[[max_total_threads_per_threadgroup({threads})]]")?;
+                }
+            }
+
             // Write the entry point function's name, and begin its argument list.
             writeln!(self.out, "{em_str} {result_type_name} {fun_name}(")?;
 

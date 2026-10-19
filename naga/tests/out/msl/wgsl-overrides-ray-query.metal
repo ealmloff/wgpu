@@ -23,6 +23,7 @@ struct RayDesc {
 };
 constant float o = 2.0;
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   metal::raytracing::instance_acceleration_structure acc_struct [[user(fake0)]]
 ) {

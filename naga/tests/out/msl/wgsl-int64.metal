@@ -220,6 +220,7 @@ ulong uint64_function(
     return _e144;
 }
 
+[[max_total_threads_per_threadgroup(1)]]
 kernel void main_(
   constant UniformCompatible& input_uniform [[user(fake0)]]
 , device UniformCompatible const& input_storage [[user(fake0)]]

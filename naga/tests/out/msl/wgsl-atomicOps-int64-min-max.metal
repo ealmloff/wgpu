@@ -14,6 +14,7 @@ struct Struct {
 
 struct cs_mainInput {
 };
+[[max_total_threads_per_threadgroup(2)]]
 kernel void cs_main(
   metal::uint3 id [[thread_position_in_threadgroup]]
 , device metal::atomic_ulong& storage_atomic_scalar [[user(fake0)]]
